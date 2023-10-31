@@ -1,7 +1,15 @@
 #!/bin/bash
 
-CONFIG_JRE_MODULES="$ROOT_DIR/jre_modules.daedalus"
-CONFIG_PLATFORMS="$ROOT_DIR/platforms.daedalus"
+CONFIG_JRE_MODULES=(
+    "java.base"
+)
+
+CONFIG_PLATFORMS=(
+    "linux"
+    "windows"
+    "macos"
+)
+
 CONFIG_MAIN_CLASS="org.example.Main"
 
 # This is called from daedalus' distribute.sh

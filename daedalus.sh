@@ -14,20 +14,9 @@ main() {
     mkdir -p "$LIB_DIR"
     copy_artifacts "$LIB_DIR"
 
-    while read -r platform; do
-        if [ -z "$platform" ] || [[ "$platform" == \#* ]]; then
-            continue
-        fi
-
-        case "$platform" in
-            linux|windows|macos)
-                create_distribution "$platform"
-                ;;
-            *)
-                echo "Warning: Invalid platform '$platform' skipped."
-                ;;
-        esac
-    done < "$CONFIG_PLATFORMS"
+    for platform in "${CONFIG_PLATFORMS}"; do
+        create_distribution "$platform"
+    done
 
     echo "Cleaning up..."
     rm -rf "$WORK_DIR"
@@ -154,8 +143,12 @@ create_minimized_jre() {
     local jmod_dest="$1"
     local jre_dir="$2"
 
-    local jre_modules
-    jre_modules=$(tr '\n' ',' < "$CONFIG_JRE_MODULES" | sed 's/,$//')
+    local prev_ifs="$IFS"
+    IFS=","
+
+    local jre_modules="${CONFIG_JRE_MODULES[*]}"
+    IFS="$prev_ifs"
+
     echo "Creating minimized JRE with modules:"
     echo "$jre_modules"
     jlink --add-modules "$jre_modules" --module-path "$jmod_dest" --output "$jre_dir" --strip-debug --no-header-files --no-man-pages
